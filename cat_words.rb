@@ -2,7 +2,7 @@
 
 require 'csv'
 
-CAT_KEY_WORDS = %w[cat feline].freeze
+CAT_KEY_WORDS = %w[felis cat feline].freeze
 
 def display_welcome_message
   puts 'Welcome to cat words!'
@@ -39,9 +39,13 @@ def create_dictionary_as_hash(dictionary_as_array)
   end
 end
 
+def format_word(word)
+  word.downcase.gsub(/\W+/, '')
+end
+
 def cat_like_definition?(definition)
   words = definition.split(' ')
-  words.any? { |word| CAT_KEY_WORDS.include?(word) }
+  words.any? { |word| CAT_KEY_WORDS.include?(format_word(word)) }
 end
 
 def cat_word?(definitions)
@@ -64,7 +68,37 @@ def create_cat_dictionary
 end
 
 def valid_input?(user_answer)
-  %w[verify define list exit].include?(user_answer)
+  %w[define exit list verify].include?(user_answer)
+end
+
+def user_cat_word?(word, cat_dictionary)
+  cat_dictionary.key?(word)
+end
+
+def run_define_command(cat_dictionary)
+  puts 'Which cat word do you want to define?'
+  user_answer = gets.chomp.capitalize
+  unless user_cat_word?(user_answer, cat_dictionary)
+    puts "That's not even a cat word. hiss"
+  end
+  puts "Here is the definition for #{user_answer}:"
+  puts cat_dictionary[user_answer]
+end
+
+def run_list_command(cat_dictionary)
+  puts 'Wow you must really love cats.'
+  puts cat_dictionary.keys
+  puts "That was all #{cat_dictionary.keys.length} cat words. purr"
+end
+
+def run_verify_command(cat_dictionary)
+  puts 'Which word do you want to verify for its catness?'
+  user_answer = gets.chomp.capitalize
+  if user_cat_word?(user_answer, cat_dictionary)
+    puts "#{user_answer} is a cat word! =^..^= purr"
+  else
+    puts "#{user_answer} is not a cat word. hiss"
+  end
 end
 
 def start_command_interface(cat_dictionary)
@@ -72,13 +106,13 @@ def start_command_interface(cat_dictionary)
     puts 'What command do you want to run? (verify/define/list/exit)'
     user_answer = gets.chomp.downcase
     if valid_input?(user_answer)
-      puts 'You said verify, define, list, or exit'
-      if user_answer == 'verify'
-        puts 'Verify will go here'
-      elsif user_answer == 'define'
-        puts 'Define will go here'
+      puts 'You said define, exit, list, or verify.'
+      if user_answer == 'define'
+        run_define_command(cat_dictionary)
       elsif user_answer == 'list'
-        puts 'List will go here'
+        run_list_command(cat_dictionary)
+      elsif user_answer == 'verify'
+        run_verify_command(cat_dictionary)
       elsif user_answer == 'exit'
         break
       end
