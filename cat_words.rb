@@ -8,6 +8,10 @@ def display_welcome_message
   puts 'Welcome to cat words!'
 end
 
+def display_farewell_message
+  puts 'Goodbye =^..^='
+end
+
 def load_dictionary_for_letter(letter, csv_read_options, accumulator)
   path = "dictionary/#{letter}.csv"
   dictionary_for_letter = CSV.read(path, **csv_read_options)
@@ -59,12 +63,39 @@ def create_cat_dictionary
   cat_word_accumulator
 end
 
+def valid_input?(user_answer)
+  %w[verify define list exit].include?(user_answer)
+end
+
+def start_command_interface(cat_dictionary)
+  loop do
+    puts 'What command do you want to run? (verify/define/list/exit)'
+    user_answer = gets.chomp.downcase
+    if valid_input?(user_answer)
+      puts 'You said verify, define, list, or exit'
+      if user_answer == 'verify'
+        puts 'Verify will go here'
+      elsif user_answer == 'define'
+        puts 'Define will go here'
+      elsif user_answer == 'list'
+        puts 'List will go here'
+      elsif user_answer == 'exit'
+        break
+      end
+    else
+      puts 'Invalid command'
+    end
+  end
+end
+
 def run
   display_welcome_message
 
   cat_dictionary = create_cat_dictionary
 
-  puts 'What command do you want to run? (verify/define/list)'
+  start_command_interface(cat_dictionary)
+
+  display_farewell_message
 end
 
 run
